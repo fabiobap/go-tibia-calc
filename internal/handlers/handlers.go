@@ -20,14 +20,15 @@ type Repository struct {
 }
 
 type InfoLevelResponse struct {
-	Hitpoints  int `json:"hitpoints"`
-	Manapoints int `json:"manapoints"`
-	Cap        int `json:"cap"`
-	Experience int `json:"experience"`
-	OneBless   int `json:"one_bless"`
-	FiveBless  int `json:"five_bless"`
-	SevenBless int `json:"seven_bless"`
-	FullBless  int `json:"full_bless"`
+	Hitpoints        int    `json:"hitpoints"`
+	Manapoints       int    `json:"manapoints"`
+	Cap              int    `json:"cap"`
+	Experience       int    `json:"experience"`
+	OneRegularBless  string `json:"one_reg_bless"`
+	FiveRegularBless string `json:"five_reg_bless"`
+	TwistBless       string `json:"twist_bless"`
+	SevenBless       string `json:"seven_bless"`
+	FullBless        string `json:"full_bless"`
 }
 
 func NewRepo(ac *config.AppConfig) *Repository {
@@ -90,14 +91,15 @@ func (m *Repository) PostInfoLevel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := InfoLevelResponse{
-		Hitpoints:  character.Hitpoints,
-		Manapoints: character.Manapoints,
-		Cap:        character.Cap,
-		Experience: character.Experience,
-		OneBless:   character.BlessingCostOne,
-		FiveBless:  character.BlessingCostFive,
-		SevenBless: character.BlessingCostSeven,
-		FullBless:  character.BlessingCostFull,
+		Hitpoints:        character.Hitpoints,
+		Manapoints:       character.Manapoints,
+		Cap:              character.Cap,
+		Experience:       character.Experience,
+		OneRegularBless:  render.Gold(character.BlessingRegularOne),
+		TwistBless:       render.Gold(character.BlessingTwist),
+		FiveRegularBless: render.Gold(character.BlessingRegularFive),
+		SevenBless:       render.Gold(character.BlessingSeven),
+		FullBless:        render.Gold(character.BlessingFull),
 	}
 
 	out, err := json.MarshalIndent(resp, "", "    ")

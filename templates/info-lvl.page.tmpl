@@ -16,7 +16,7 @@ Calc Info Level
 
 {{define "content"}}
 {{$checkedRadio:= index .StringMap "vocation"}}
-<div class="col-md-12">
+<div class="col-md-6">
     <div class="container mt-5">
         <form id="levelForm" action="/info-lvl" method="post" class="mb-4">
                         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
@@ -79,19 +79,23 @@ Calc Info Level
                     <td id="exp">-</td>
                 </tr>
                 <tr>
-                    <th scope="row">One bless cost</th>
-                    <td id="one_bless">-</td>
+                    <th scope="row">One Regular bless cost</th>
+                    <td id="one_reg_bless">-</td>
                 </tr>
                 <tr>
-                    <th scope="row">Five bless cost</th>
-                    <td id="five_bless">-</td>
+                    <th scope="row">Twist bless cost</th>
+                    <td id="twist_bless">-</td>
                 </tr>
                 <tr>
-                    <th scope="row">Seven bless cost</th>
+                    <th scope="row">Five blesses cost</th>
+                    <td id="five_reg_bless">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Seven blesses cost</th>
                     <td id="seven_bless">-</td>
                 </tr>
                 <tr>
-                    <th scope="row">Full bless cost</th>
+                    <th scope="row">All blesses cost</th>
                     <td id="full_bless">-</td>
                 </tr>
             </tbody>
@@ -123,10 +127,11 @@ Calc Info Level
                     $('#manapoints').text(response.manapoints);
                     $('#cap').text(response.cap);
                     $('#exp').text(response.experience);
-                    $('#one_bless').text(response.one_bless);
-                    $('#five_bless').text(response.five_bless);
-                    $('#seven_bless').text(response.seven_bless);
-                    $('#full_bless').text(response.full_bless);
+                    $('#one_reg_bless').text(response.one_reg_bless+" gold coins");
+                    $('#twist_bless').text(response.twist_bless+" gold coins");
+                    $('#five_reg_bless').text(response.five_reg_bless+" gold coins");
+                    $('#seven_bless').text(response.seven_bless+" gold coins");
+                    $('#full_bless').text(response.full_bless+" gold coins");
                     // $('#experience').text(response.experience);
                 }
             });

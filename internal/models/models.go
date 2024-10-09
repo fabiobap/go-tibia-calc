@@ -38,16 +38,17 @@ type TemplateData struct {
 }
 
 type Character struct {
-	Level             int
-	Vocation          string
-	Hitpoints         int
-	Manapoints        int
-	Experience        int
-	Cap               int
-	BlessingCostOne   int
-	BlessingCostFive  int
-	BlessingCostSeven int
-	BlessingCostFull  int
+	Level               int
+	Vocation            string
+	Hitpoints           int
+	Manapoints          int
+	Experience          int
+	Cap                 int
+	BlessingRegularOne  int
+	BlessingTwist       int
+	BlessingRegularFive int
+	BlessingSeven       int
+	BlessingFull        int
 }
 
 func (f *Character) Load() {
@@ -55,10 +56,11 @@ func (f *Character) Load() {
 	f.Manapoints = calcManapoints(f.Level, f.Vocation)
 	f.Cap = calcCap(f.Level, f.Vocation)
 	f.Experience = CalcExp(f.Level)
-	f.BlessingCostOne = calcOneBless(f.Level)
-	f.BlessingCostFive = calcFiveBless(f.Level)
-	f.BlessingCostSeven = calcSevenBless(f.Level)
-	f.BlessingCostFull = calcFullBless(f.Level)
+	f.BlessingRegularOne = calcOneBless(f.Level)
+	f.BlessingTwist = calcTwistBless(f.Level)
+	f.BlessingRegularFive = calcFiveBless(f.Level)
+	f.BlessingSeven = calcSevenBless(f.Level)
+	f.BlessingFull = calcFullBless(f.Level)
 }
 
 func CalcExp(lvl int) int {
@@ -71,7 +73,11 @@ func calcOneBless(lvl int) int {
 		return 2000
 	}
 
-	return 200 * (lvl - 20)
+	if lvl < 120 {
+		return 200 * (lvl - 20)
+	}
+
+	return 20000 + 75*(lvl-120)
 }
 
 func calcFiveBless(lvl int) int {
@@ -79,100 +85,73 @@ func calcFiveBless(lvl int) int {
 		return 2000 * 5
 	}
 
-	return lvl - 20
+	return calcOneBless(lvl) * 5
+}
+
+func calcOneEspecialBless(lvl int) int {
+	if lvl <= 30 {
+		return 2600
+	}
+
+	if lvl < 120 {
+		return 260 * (lvl - 20)
+	}
+
+	return 26000 + 100*(lvl-120)
+}
+
+func calcTwistBless(lvl int) int {
+	if lvl <= 30 {
+		return 2000
+	}
+
+	if lvl < 120 {
+		return 200 * (lvl - 20)
+	}
+
+	return 50000
 }
 
 func calcSevenBless(lvl int) int {
-	if lvl <= 30 {
-		return calcFiveBless(lvl) + 5200
-	}
-
-	return int((float64(lvl) - 20) * 1.52)
+	return calcFiveBless(lvl) + (calcOneEspecialBless(lvl) * 2)
 }
 
 func calcFullBless(lvl int) int {
-	if lvl <= 20 {
-		return calcSevenBless(lvl)
-	}
-
-	return int((float64(lvl) - 20) * 1.72)
+	return calcSevenBless(lvl) + calcTwistBless(lvl)
 }
 
 func calcHitpoints(level int, vocation string) int {
-	if level == BASE_LEVEL {
-		return BASE_HITPOINTS
+	if level < 9 || vocation == "mage" || vocation == "none" {
+		return 5 * (level + 29)
 	}
 
-	if level < 9 {
-		return BASE_HITPOINTS + (level * HP_LVL_NONE) - HP_LVL_NONE
+	if vocation == "paladin" {
+		return 5 * (2*level + 21)
+	} else {
+		return 5 * (3*level + 13)
 	}
-
-	base := BASE_HITPOINTS + (7 * HP_LVL_NONE)
-	var hitpoints int
-
-	switch vocation {
-	case "mage":
-		hitpoints = base + (level-8)*HP_LVL_MAGE
-	case "paladin":
-		hitpoints = base + (level-8)*HP_LVL_PALADIN
-	case "knight":
-		hitpoints = base + (level-8)*HP_LVL_KNIGHT
-	default:
-		hitpoints = base + (level-8)*HP_LVL_NONE
-	}
-
-	return hitpoints
 }
 
 func calcManapoints(level int, vocation string) int {
-	if level == BASE_LEVEL {
-		return BASE_MANAPOINTS
+	if level < 9 || vocation == "knight" || vocation == "none" {
+		return 5 * (level + 10)
 	}
 
-	if level < 9 {
-		return BASE_MANAPOINTS + (level * MANA_LVL_NONE) - MANA_LVL_NONE
+	if vocation == "paladin" {
+		return 5 * (3*level - 6)
+	} else {
+		return 5 * (6*level - 30)
 	}
-
-	base := BASE_MANAPOINTS + (7 * MANA_LVL_NONE)
-	var manapoints int
-
-	switch vocation {
-	case "mage":
-		manapoints = base + (level-8)*MANA_LVL_MAGE
-	case "paladin":
-		manapoints = base + (level-8)*MANA_LVL_PALADIN
-	case "knight":
-		manapoints = base + (level-8)*MANA_LVL_KNIGHT
-	default:
-		manapoints = base + (level-8)*MANA_LVL_NONE
-	}
-
-	return manapoints
 }
 
 func calcCap(level int, vocation string) int {
-	if level == BASE_LEVEL {
-		return BASE_CAP
+	if level < 9 || vocation == "mage" || vocation == "none" {
+		return 10 * (level + 39)
 	}
 
-	if level < 9 {
-		return BASE_CAP + (level * CAP_LVL_NONE) - CAP_LVL_NONE
+	if vocation == "paladin" {
+		return 10 * (2*level + 31)
+	} else {
+		return 5 * (5*level + 54)
 	}
-
-	base := BASE_CAP + (7 * CAP_LVL_NONE)
-	var cap int
-
-	switch vocation {
-	case "mage":
-		cap = base + (level-8)*CAP_LVL_MAGE
-	case "paladin":
-		cap = base + (level-8)*CAP_LVL_PALADIN
-	case "knight":
-		cap = base + (level-8)*CAP_LVL_KNIGHT
-	default:
-		cap = base + (level-8)*CAP_LVL_NONE
-
-	}
-
-	return cap
 }
