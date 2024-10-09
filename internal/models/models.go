@@ -51,6 +51,12 @@ type Character struct {
 	BlessingFull        int
 }
 
+type MidnightShard struct {
+	Level      int
+	Experience int
+	Quantity   int
+}
+
 func (f *Character) Load() {
 	f.Hitpoints = calcHitpoints(f.Level, f.Vocation)
 	f.Manapoints = calcManapoints(f.Level, f.Vocation)
@@ -61,6 +67,14 @@ func (f *Character) Load() {
 	f.BlessingRegularFive = calcFiveBless(f.Level)
 	f.BlessingSeven = calcSevenBless(f.Level)
 	f.BlessingFull = calcFullBless(f.Level)
+}
+
+func (m *MidnightShard) Load() {
+	m.Experience = CalcMidnightShard(m.Level, m.Quantity)
+}
+
+func CalcMidnightShard(lvl, qty int) int {
+	return (300 * qty) * lvl
 }
 
 func CalcExp(lvl int) int {

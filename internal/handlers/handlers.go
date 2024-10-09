@@ -30,6 +30,9 @@ type InfoLevelResponse struct {
 	SevenBless       string `json:"seven_bless"`
 	FullBless        string `json:"full_bless"`
 }
+type MidnightShardsResponse struct {
+	Experience int `json:"experience"`
+}
 
 func NewRepo(ac *config.AppConfig) *Repository {
 	return &Repository{
@@ -46,7 +49,6 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) InfoLevel(w http.ResponseWriter, r *http.Request) {
-
 	stringMap := make(map[string]string)
 	stringMap["vocation"] = "none"
 
@@ -82,9 +84,9 @@ func (m *Repository) PostInfoLevel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	character.Load()
-	if !form.Valid() {
 
-		render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+	if !form.Valid() {
+		render.Template(w, r, "info-lvl.page.tmpl", &models.TemplateData{
 			Form: form,
 		})
 		return
@@ -115,11 +117,61 @@ func (m *Repository) PostInfoLevel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) MidnightShards(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "midnight-shards.page.tmpl", &models.TemplateData{})
+	intMap := make(map[string]int)
+	intMap["level"] = 1
+	intMap["quantity"] = 1
+
+	render.Template(w, r, "midnight-shards.page.tmpl", &models.TemplateData{
+		Form:   forms.New(nil),
+		IntMap: intMap,
+	})
 }
 
 func (m *Repository) PostMidnightShards(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
 
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "can't parse form!")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("level", "qty")
+	form.Minlength("level", 1)
+	form.Minlength("qty", 1)
+
+	level, _ := strconv.Atoi(r.Form.Get("level"))
+	qty, _ := strconv.Atoi(r.Form.Get("qty"))
+
+	ms := models.MidnightShard{
+		Quantity: qty,
+		Level:    level,
+	}
+
+	ms.Load()
+
+	if !form.Valid() {
+		render.Template(w, r, "midnight-shards.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+		return
+	}
+
+	resp := MidnightShardsResponse{
+		Experience: ms.Experience,
+	}
+
+	out, err := json.MarshalIndent(resp, "", "    ")
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	log.Println(string(out))
+	w.Header().Set("Content-Type", "application/json")
+
+	w.Write(out)
 }
 
 func (m *Repository) StoneOfInsight(w http.ResponseWriter, r *http.Request) {
