@@ -1,0 +1,116 @@
+{{template "admin" .}}
+{{define "css"}}
+<style>
+    .form-check {
+        margin-left: 2rem;
+    }
+
+    .form-check .form-check-label {
+        margin-left: 0.5rem;
+    }
+</style>
+{{end}}
+{{define "page-title"}}
+Calc Info Level
+{{end}}
+
+{{define "content"}}
+{{$checkedRadio:= index .StringMap "vocation"}}
+<div class="col-md-12">
+    <div class="container mt-5">
+        <form id="levelForm" action="/info-lvl" method="post" class="mb-4">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="form-group">
+                <label for="level">Level</label>
+                <input type="number" class="form-control" id="level" name="level" value="{{index .IntMap "level"}}"
+                    required>
+            </div>
+            <label>Class</label><br>
+            <div class="d-flex mr-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="vocation" id="none" value="none"
+                    {{ if eq $checkedRadio "none" }}checked{{ end }}
+                    >
+                    <label class="form-check-label" for="none">None</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="vocation" id="mage" value="mage"
+                    {{ if eq $checkedRadio "mage" }}checked{{ end }}
+                    >
+                    <label class="form-check-label" for="mage">Druid/Sorcerer</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="vocation" id="paladin" value="paladin"
+                    {{ if eq $checkedRadio "paladin" }}checked{{ end }}
+                    >
+                    <label class="form-check-label" for="paladin">Paladin</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="vocation" id="knight" value="knight"
+                    {{ if eq $checkedRadio "knight" }}checked{{ end }}
+                    >
+                    <label class="form-check-label" for="knight">Knight</label>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Hitpoints</th>
+                    <td id="hitpoints">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Manapoints</th>
+                    <td id="manapoints">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Cap</th>
+                    <td id="cap">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Experience</th>
+                    <td id="exp">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
+{{define "js"}}
+<script>
+    $(document).ready(function () {
+        $('#level').on('change', function () {
+            $('#levelForm').submit();
+        });
+
+    $('input[type=radio][name=vocation]').change(function() {
+            $('#levelForm').submit();
+        });
+
+        $('#levelForm').on('submit', function (event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            console.log(formData)
+            $.ajax({
+                type: 'POST',
+                url: '/info-lvl',
+                data: formData,
+                success: function (response) {
+                    $('#hitpoints').text(response.hitpoints);
+                    $('#manapoints').text(response.manapoints);
+                    $('#cap').text(response.cap);
+                    $('#exp').text(response.experience);
+                    // $('#experience').text(response.experience);
+                }
+            });
+        });
+    });
+</script>
+{{end}}

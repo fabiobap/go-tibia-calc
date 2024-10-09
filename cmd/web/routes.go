@@ -19,6 +19,12 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	mux.Get("/", handlers.Repo.Home)
+	mux.Get("/info-lvl", handlers.Repo.InfoLevel)
+	mux.Post("/info-lvl", handlers.Repo.PostInfoLevel)
+	mux.Get("/midnight-shards", handlers.Repo.MidnightShards)
+	mux.Post("/midnight-shards", handlers.Repo.PostMidnightShards)
+	mux.Get("/stone-of-insight", handlers.Repo.StoneOfInsight)
+	mux.Post("/stone-of-insight", handlers.Repo.PostStoneOfInsight)
 
 	return mux
 }
