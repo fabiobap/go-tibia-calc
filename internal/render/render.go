@@ -20,6 +20,11 @@ var pathToTemplates = "./templates"
 var functions = template.FuncMap{
 	"humanDate":  HumanDate,
 	"formatDate": FormatDate,
+	"formatGold": Gold,
+}
+
+func Gold(value int) string {
+	return fmt.Sprintf("%d.%03d", value/1000, value%1000)
 }
 
 func NewRenderer(ac *config.AppConfig) {

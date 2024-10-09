@@ -78,6 +78,22 @@ Calc Info Level
                     <th scope="row">Experience</th>
                     <td id="exp">-</td>
                 </tr>
+                <tr>
+                    <th scope="row">One bless cost</th>
+                    <td id="one_bless">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Five bless cost</th>
+                    <td id="five_bless">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Seven bless cost</th>
+                    <td id="seven_bless">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Full bless cost</th>
+                    <td id="full_bless">-</td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -107,6 +123,10 @@ Calc Info Level
                     $('#manapoints').text(response.manapoints);
                     $('#cap').text(response.cap);
                     $('#exp').text(response.experience);
+                    $('#one_bless').text(response.one_bless);
+                    $('#five_bless').text(response.five_bless);
+                    $('#seven_bless').text(response.seven_bless);
+                    $('#full_bless').text(response.full_bless);
                     // $('#experience').text(response.experience);
                 }
             });

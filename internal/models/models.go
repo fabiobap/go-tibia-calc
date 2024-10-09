@@ -38,15 +38,16 @@ type TemplateData struct {
 }
 
 type Character struct {
-	Level            int
-	Vocation         string
-	Hitpoints        int
-	Manapoints       int
-	Experience       int
-	Cap              int
-	BlessingCostOne  float32
-	BlessingCostFive float32
-	BlessingCostFull float32
+	Level             int
+	Vocation          string
+	Hitpoints         int
+	Manapoints        int
+	Experience        int
+	Cap               int
+	BlessingCostOne   int
+	BlessingCostFive  int
+	BlessingCostSeven int
+	BlessingCostFull  int
 }
 
 func (f *Character) Load() {
@@ -54,11 +55,47 @@ func (f *Character) Load() {
 	f.Manapoints = calcManapoints(f.Level, f.Vocation)
 	f.Cap = calcCap(f.Level, f.Vocation)
 	f.Experience = CalcExp(f.Level)
+	f.BlessingCostOne = calcOneBless(f.Level)
+	f.BlessingCostFive = calcFiveBless(f.Level)
+	f.BlessingCostSeven = calcSevenBless(f.Level)
+	f.BlessingCostFull = calcFullBless(f.Level)
 }
 
 func CalcExp(lvl int) int {
 	l := float64(lvl)
 	return int((50*math.Pow(l-1, 3) - 150*math.Pow(l-1, 2) + 400*(l-1)) / 3)
+}
+
+func calcOneBless(lvl int) int {
+	if lvl <= 30 {
+		return 2000
+	}
+
+	return 200 * (lvl - 20)
+}
+
+func calcFiveBless(lvl int) int {
+	if lvl <= 30 {
+		return 2000 * 5
+	}
+
+	return lvl - 20
+}
+
+func calcSevenBless(lvl int) int {
+	if lvl <= 30 {
+		return calcFiveBless(lvl) + 5200
+	}
+
+	return int((float64(lvl) - 20) * 1.52)
+}
+
+func calcFullBless(lvl int) int {
+	if lvl <= 20 {
+		return calcSevenBless(lvl)
+	}
+
+	return int((float64(lvl) - 20) * 1.72)
 }
 
 func calcHitpoints(level int, vocation string) int {

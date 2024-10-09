@@ -24,6 +24,10 @@ type InfoLevelResponse struct {
 	Manapoints int `json:"manapoints"`
 	Cap        int `json:"cap"`
 	Experience int `json:"experience"`
+	OneBless   int `json:"one_bless"`
+	FiveBless  int `json:"five_bless"`
+	SevenBless int `json:"seven_bless"`
+	FullBless  int `json:"full_bless"`
 }
 
 func NewRepo(ac *config.AppConfig) *Repository {
@@ -90,6 +94,10 @@ func (m *Repository) PostInfoLevel(w http.ResponseWriter, r *http.Request) {
 		Manapoints: character.Manapoints,
 		Cap:        character.Cap,
 		Experience: character.Experience,
+		OneBless:   character.BlessingCostOne,
+		FiveBless:  character.BlessingCostFive,
+		SevenBless: character.BlessingCostSeven,
+		FullBless:  character.BlessingCostFull,
 	}
 
 	out, err := json.MarshalIndent(resp, "", "    ")
