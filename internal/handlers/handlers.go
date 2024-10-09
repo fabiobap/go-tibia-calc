@@ -30,7 +30,12 @@ type InfoLevelResponse struct {
 	SevenBless       string `json:"seven_bless"`
 	FullBless        string `json:"full_bless"`
 }
+
 type MidnightShardsResponse struct {
+	Experience int `json:"experience"`
+}
+
+type SOIResponse struct {
 	Experience int `json:"experience"`
 }
 
@@ -175,8 +180,55 @@ func (m *Repository) PostMidnightShards(w http.ResponseWriter, r *http.Request) 
 }
 
 func (m *Repository) StoneOfInsight(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "soi.page.tmpl", &models.TemplateData{})
+	intMap := make(map[string]int)
+	intMap["level"] = 1
+
+	render.Template(w, r, "soi.page.tmpl", &models.TemplateData{
+		Form:   forms.New(nil),
+		IntMap: intMap,
+	})
 }
 
 func (m *Repository) PostStoneOfInsight(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "can't parse form!")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("level")
+	form.Minlength("level", 1)
+
+	level, _ := strconv.Atoi(r.Form.Get("level"))
+
+	soi := models.StoneOfInsight{
+		Level: level,
+	}
+
+	soi.Load()
+
+	if !form.Valid() {
+		render.Template(w, r, "soi.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+		return
+	}
+
+	resp := SOIResponse{
+		Experience: soi.Experience,
+	}
+
+	out, err := json.MarshalIndent(resp, "", "    ")
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	log.Println(string(out))
+	w.Header().Set("Content-Type", "application/json")
+
+	w.Write(out)
 }

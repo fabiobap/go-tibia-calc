@@ -1,14 +1,67 @@
 {{template "admin" .}}
 {{define "css"}}
+<style>
+    .form-check {
+        margin-left: 2rem;
+    }
+
+    .form-check .form-check-label {
+        margin-left: 0.5rem;
+    }
+</style>
 {{end}}
 {{define "page-title"}}
-Home
+Calc Midnight Shards
 {{end}}
 
 {{define "content"}}
-<div class="col-md-12">
-    <h1>Info lvl</h1>
+<div class="col-md-6">
+    <div class="container mt-5">
+        <form id="levelForm" action="/stone-of-insight" method="post" class="mb-4">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="form-group">
+                <label for="level">Level</label>
+                <input type="number" class="form-control" id="level" name="level" min="1" value="{{index .IntMap "level"}}" required>
+            </div>
+        </form>
+        <hr>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Experience</th>
+                    <td id="exp">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 {{end}}
 {{define "js"}}
+<script>
+    $(document).ready(function () {
+        $('#level').on('change', function () {
+            $('#levelForm').submit();
+        });
+
+        $('#levelForm').on('submit', function (event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            console.log(formData)
+            $.ajax({
+                type: 'POST',
+                url: '/stone-of-insight',
+                data: formData,
+                success: function (response) {
+                    $('#exp').text(response.experience);
+                }
+            });
+        });
+    });
+</script>
 {{end}}

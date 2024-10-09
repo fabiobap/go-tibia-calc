@@ -57,6 +57,11 @@ type MidnightShard struct {
 	Quantity   int
 }
 
+type StoneOfInsight struct {
+	Level      int
+	Experience int
+}
+
 func (f *Character) Load() {
 	f.Hitpoints = calcHitpoints(f.Level, f.Vocation)
 	f.Manapoints = calcManapoints(f.Level, f.Vocation)
@@ -69,12 +74,20 @@ func (f *Character) Load() {
 	f.BlessingFull = calcFullBless(f.Level)
 }
 
+func (soi *StoneOfInsight) Load() {
+	soi.Experience = CalcSOI(soi.Level)
+}
+
 func (m *MidnightShard) Load() {
 	m.Experience = CalcMidnightShard(m.Level, m.Quantity)
 }
 
 func CalcMidnightShard(lvl, qty int) int {
 	return (300 * qty) * lvl
+}
+
+func CalcSOI(lvl int) int {
+	return int(100 * math.Pow(float64(lvl), 2))
 }
 
 func CalcExp(lvl int) int {
