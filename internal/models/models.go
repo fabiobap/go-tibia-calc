@@ -59,6 +59,7 @@ type MidnightShard struct {
 
 type StoneOfInsight struct {
 	Level      int
+	NewLevel   int
 	Experience int
 }
 
@@ -75,7 +76,9 @@ func (f *Character) Load() {
 }
 
 func (soi *StoneOfInsight) Load() {
-	soi.Experience = CalcSOI(soi.Level)
+	soiCalc := CalcSOI(soi.Level)
+	soi.Experience = soiCalc
+	soi.NewLevel = FindNewLevel(soiCalc)
 }
 
 func (m *MidnightShard) Load() {
@@ -88,6 +91,16 @@ func CalcMidnightShard(lvl, qty int) int {
 
 func CalcSOI(lvl int) int {
 	return int(100 * math.Pow(float64(lvl), 2))
+}
+
+func FindNewLevel(newExp int) int {
+	x := math.Pow((3*float64(newExp)/100-3), 2) + 125/27
+	y := 3*newExp/100 - 3
+
+	a := math.Cbrt(math.Sqrt(x) + float64(y))
+	b := math.Cbrt(-math.Sqrt(x) + float64(y))
+
+	return int(math.Floor(a + b + 2))
 }
 
 func CalcExp(lvl int) int {

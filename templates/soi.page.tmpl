@@ -34,8 +34,12 @@ Calc Midnight Shards
             </thead>
             <tbody>
                 <tr>
-                    <th scope="row">Experience</th>
+                    <th scope="row">Experience Gained</th>
                     <td id="exp">-</td>
+                </tr>
+                <tr>
+                    <th scope="row">New Level</th>
+                    <td id="new_lvl">-</td>
                 </tr>
             </tbody>
         </table>
@@ -59,6 +63,7 @@ Calc Midnight Shards
                 data: formData,
                 success: function (response) {
                     $('#exp').text(response.experience);
+                    $('#new_lvl').text(response.new_lvl);
                 }
             });
         });

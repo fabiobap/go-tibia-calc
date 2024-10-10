@@ -37,6 +37,7 @@ type MidnightShardsResponse struct {
 
 type SOIResponse struct {
 	Experience int `json:"experience"`
+	NewLevel   int `json:"new_lvl"`
 }
 
 func NewRepo(ac *config.AppConfig) *Repository {
@@ -219,6 +220,7 @@ func (m *Repository) PostStoneOfInsight(w http.ResponseWriter, r *http.Request) 
 
 	resp := SOIResponse{
 		Experience: soi.Experience,
+		NewLevel:   soi.NewLevel,
 	}
 
 	out, err := json.MarshalIndent(resp, "", "    ")
